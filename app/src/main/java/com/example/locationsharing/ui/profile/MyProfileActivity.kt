@@ -2,55 +2,36 @@ package com.example.locationsharing.ui.profile
 
 import android.os.Bundle
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.ViewModelProvider
 import com.example.locationsharing.R
 import com.example.locationsharing.databinding.ActivityMyProfileBinding
-import com.example.locationsharing.utils.LocationHelper
-import com.example.locationsharing.viewmodel.ProfileViewModel
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 class MyProfileActivity : AppCompatActivity() {
 
-    private lateinit var _binding: ActivityMyProfileBinding
-    private var binding: ActivityMyProfileBinding
-        get() = _binding
-        set(value) {
-            _binding = value
-        }
-    private lateinit var viewModel: ProfileViewModel
-    private lateinit var locationHelper: LocationHelper
+    private lateinit var binding: ActivityMyProfileBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         binding = DataBindingUtil.setContentView(this, R.layout.activity_my_profile)
-        viewModel = ViewModelProvider(this)[ProfileViewModel::class.java]
-        locationHelper = LocationHelper(this)
 
-        binding.btnUpdateProfile.setOnClickListener {
-            locationHelper.getLastLocation { lat, lng ->
-                viewModel.updateProfile(
-                    binding.etName.text.toString(),
-                    lat,
-                    lng
-                )
-            }
+        val uid = FirebaseAuth.getInstance().currentUser!!.uid
+        val db = FirebaseFirestore.getInstance()
+
+        db.collection("users").document(uid).get().addOnSuccessListener {
+            binding.tvEmail.text = it.getString("email")
+            binding.tvLat.text = it.getDouble("latitude").toString()
+            binding.tvLng.text = it.getDouble("longitude").toString()
         }
 
-        observeUpdate()
-    }
-
-    private fun observeUpdate() {
-        viewModel.updateStatus.observe(this) {
-            if (it) {
-                Toast.makeText(this, "Profile Updated", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(this, "Update Failed", Toast.LENGTH_SHORT).show()
-            }
+        binding.btnUpdateProfile.setOnClickListener {
+            db.collection("users").document(uid)
+                .update("displayName", binding.etName.text.toString())
+                .addOnSuccessListener {
+                    Toast.makeText(this, "Profile Updated", Toast.LENGTH_SHORT).show()
+                }
         }
     }
 }

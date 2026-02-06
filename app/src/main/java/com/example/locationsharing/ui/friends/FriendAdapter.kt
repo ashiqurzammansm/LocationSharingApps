@@ -6,34 +6,37 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.locationsharing.data.model.User
 import com.example.locationsharing.databinding.ItemFriendBinding
 
-class FriendAdapter : RecyclerView.Adapter<FriendAdapter.FriendViewHolder>() {
+class FriendAdapter(
+    private val onClick: (User) -> Unit
+) : RecyclerView.Adapter<FriendAdapter.ViewHolder>() {
 
-    private var userList: List<User> = emptyList()
+    private var list = listOf<User>()
 
-    fun submitList(list: List<User>) {
-        userList = list
+    fun submitList(data: List<User>) {
+        list = data
         notifyDataSetChanged()
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FriendViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = ItemFriendBinding.inflate(
             LayoutInflater.from(parent.context), parent, false
         )
-        return FriendViewHolder(binding)
+        return ViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: FriendViewHolder, position: Int) {
-        holder.bind(userList[position])
+    override fun getItemCount() = list.size
+
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        holder.bind(list[position])
     }
 
-    override fun getItemCount(): Int = userList.size
-
-    class FriendViewHolder(private val binding: ItemFriendBinding) :
+    inner class ViewHolder(private val binding: ItemFriendBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(user: User) {
             binding.tvName.text = user.displayName
             binding.tvEmail.text = user.email
+            binding.root.setOnClickListener { onClick(user) }
         }
     }
 }
