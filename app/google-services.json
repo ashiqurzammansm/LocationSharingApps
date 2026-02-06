@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "134255310802",
+    "project_id": "locationsharing-ffd50",
+    "storage_bucket": "locationsharing-ffd50.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:134255310802:android:1347e41d5e306a5cc0fa0b",
+        "android_client_info": {
+          "package_name": "com.example.locationsharing"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB_MpuoFTRPAbYFAqyHN6Rjhb76z6osLio"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
