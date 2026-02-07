@@ -1,7 +1,11 @@
 package com.example.locationsharing.ui.map
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.example.locationsharing.R
 import com.example.locationsharing.data.model.User
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -28,18 +32,34 @@ class GoogleMapActivity : AppCompatActivity(), OnMapReadyCallback {
 
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
-        map.isMyLocationEnabled = true
-        loadMarkers()
 
-        intent.extras?.let {
-            val lat = it.getDouble("lat", 0.0)
-            val lng = it.getDouble("lng", 0.0)
-            if (lat != 0.0 && lng != 0.0) {
-                map.animateCamera(
-                    CameraUpdateFactory.newLatLngZoom(LatLng(lat, lng), 16f)
-                )
-            }
+        if (hasLocationPermission()) {
+            enableLocation()
+        } else {
+            requestPermission()
         }
+
+        loadMarkers()
+    }
+
+    private fun enableLocation() {
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) return
+
+        map.isMyLocationEnabled = true
+
+        val lat = intent.getDoubleExtra("lat", 23.8103)
+        val lng = intent.getDoubleExtra("lng", 90.4125) // Dhaka default
+
+        map.moveCamera(
+            CameraUpdateFactory.newLatLngZoom(
+                LatLng(lat, lng),
+                15f
+            )
+        )
     }
 
     private fun loadMarkers() {
@@ -47,7 +67,7 @@ class GoogleMapActivity : AppCompatActivity(), OnMapReadyCallback {
             .addSnapshotListener { snap, _ ->
                 map.clear()
                 snap?.toObjects(User::class.java)?.forEach {
-                    if (it.latitude != 0.0) {
+                    if (it.latitude != 0.0 && it.longitude != 0.0) {
                         map.addMarker(
                             MarkerOptions()
                                 .position(LatLng(it.latitude, it.longitude))
@@ -57,5 +77,33 @@ class GoogleMapActivity : AppCompatActivity(), OnMapReadyCallback {
                     }
                 }
             }
+    }
+
+    private fun hasLocationPermission(): Boolean =
+        ContextCompat.checkSelfPermission(
+            this,
+            Manifest.permission.ACCESS_FINE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
+
+    private fun requestPermission() {
+        ActivityCompat.requestPermissions(
+            this,
+            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+            1001
+        )
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == 1001 &&
+            grantResults.isNotEmpty() &&
+            grantResults[0] == PackageManager.PERMISSION_GRANTED
+        ) {
+            enableLocation()
+        }
     }
 }

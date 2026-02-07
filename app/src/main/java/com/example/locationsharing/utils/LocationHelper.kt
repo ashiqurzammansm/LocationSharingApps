@@ -6,19 +6,25 @@ import com.google.android.gms.location.*
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
-class LocationHelper(context: Context) {
+class LocationHelper(private val context: Context) {
 
     private val client = LocationServices.getFusedLocationProviderClient(context)
     private val firestore = FirebaseFirestore.getInstance()
     private val auth = FirebaseAuth.getInstance()
 
     private val request = LocationRequest.Builder(
-        Priority.PRIORITY_HIGH_ACCURACY, 5000
+        Priority.PRIORITY_HIGH_ACCURACY,
+        5000
     ).build()
 
     @SuppressLint("MissingPermission")
     fun startLocationUpdates() {
-        client.requestLocationUpdates(request, callback, null)
+        if (auth.currentUser == null) return
+        client.requestLocationUpdates(
+            request,
+            callback,
+            context.mainLooper
+        )
     }
 
     private val callback = object : LocationCallback() {
