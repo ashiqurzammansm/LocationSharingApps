@@ -15,16 +15,22 @@ class MyProfileActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_my_profile)
+
+        binding = DataBindingUtil.setContentView(
+            this,
+            R.layout.activity_my_profile
+        )
 
         val uid = FirebaseAuth.getInstance().currentUser!!.uid
         val db = FirebaseFirestore.getInstance()
 
-        db.collection("users").document(uid).get().addOnSuccessListener {
-            binding.tvEmail.text = it.getString("email")
-            binding.tvLat.text = it.getDouble("latitude").toString()
-            binding.tvLng.text = it.getDouble("longitude").toString()
-        }
+        db.collection("users").document(uid)
+            .get()
+            .addOnSuccessListener {
+                binding.tvEmail.text = it.getString("email")
+                binding.tvLat.text = it.getDouble("latitude").toString()
+                binding.tvLng.text = it.getDouble("longitude").toString()
+            }
 
         binding.btnUpdateProfile.setOnClickListener {
             db.collection("users").document(uid)

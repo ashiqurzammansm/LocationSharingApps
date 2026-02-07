@@ -19,7 +19,9 @@ class FriendAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = ItemFriendBinding.inflate(
-            LayoutInflater.from(parent.context), parent, false
+            LayoutInflater.from(parent.context),
+            parent,
+            false
         )
         return ViewHolder(binding)
     }
@@ -30,8 +32,9 @@ class FriendAdapter(
         holder.bind(list[position])
     }
 
-    inner class ViewHolder(private val binding: ItemFriendBinding) :
-        RecyclerView.ViewHolder(binding.root) {
+    inner class ViewHolder(
+        private val binding: ItemFriendBinding
+    ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(user: User) {
             binding.tvName.text = user.displayName

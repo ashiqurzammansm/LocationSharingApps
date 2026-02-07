@@ -5,12 +5,7 @@ plugins {
 
 android {
     namespace = "com.example.locationsharing"
-    compileSdk {
-        version = release(36)
-    }
-    buildFeatures {
-        dataBinding = true
-    }
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.example.locationsharing"
@@ -18,8 +13,16 @@ android {
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildFeatures {
+        dataBinding = true
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
 
     buildTypes {
@@ -31,18 +34,18 @@ android {
             )
         }
     }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
 }
 
 dependencies {
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.material)
+
+    // 🔴 REQUIRED FOR DataBindingUtil
+    implementation("androidx.databinding:databinding-runtime:8.3.2")
 
     implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)

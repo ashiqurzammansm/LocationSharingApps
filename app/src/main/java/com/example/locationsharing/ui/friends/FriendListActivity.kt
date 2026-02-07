@@ -24,7 +24,11 @@ class FriendListActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_friend_list)
+        binding = DataBindingUtil.setContentView(
+            this,
+            R.layout.activity_friend_list
+        )
+
         viewModel = ViewModelProvider(this)[FriendViewModel::class.java]
         locationHelper = LocationHelper(this)
 
@@ -39,7 +43,7 @@ class FriendListActivity : AppCompatActivity() {
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
         binding.recyclerView.adapter = adapter
 
-        // 🔴 START REAL-TIME LOCATION IMMEDIATELY AFTER LOGIN
+        // 🔴 Start real-time location updates
         locationHelper.startLocationUpdates()
 
         binding.btnOpenMap.setOnClickListener {
@@ -49,7 +53,8 @@ class FriendListActivity : AppCompatActivity() {
         binding.btnLogout.setOnClickListener {
             FirebaseAuth.getInstance().signOut()
             val intent = Intent(this, AuthActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            intent.flags =
+                Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
         }
 

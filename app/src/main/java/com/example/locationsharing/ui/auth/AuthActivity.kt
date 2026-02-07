@@ -49,9 +49,9 @@ class AuthActivity : AppCompatActivity() {
             }
         }
 
-        viewModel.errorMessage.observe(this) {
-            it?.let { msg ->
-                Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
+        viewModel.errorMessage.observe(this) { msg ->
+            msg?.let {
+                Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
             }
         }
     }
